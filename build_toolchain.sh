@@ -90,7 +90,7 @@ then
   wget -c http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.10.91.tar.gz
   tar xzf fontconfig-2.10.91.tar.gz
   cd fontconfig-2.10.91
-  ./configure --prefix=$PREFIX --host=arm-linux --with-arch=arm --enable-libxml2
+  LIBXML2_CFLAGS="-I$PREFIX/include/libxml2" LIBXML2_LIBS="-L$PREFIX/lib -lxml2" ./configure --prefix=$PREFIX --host=arm-linux --with-arch=arm --enable-libxml2
   make -j4
   make install
 fi
@@ -180,20 +180,123 @@ fi
 # fi
 
 # navit
-cd /tmp
-if ! test -d navit
+if ! test -f "$PREFIX/bin/navit"
 then
-  svn co https://navit.svn.sourceforge.net/svnroot/navit/trunk/navit navit 
-else
-  svn up
+  cd /tmp
+  if ! test -d navit
+  then
+    svn co https://navit.svn.sourceforge.net/svnroot/navit/trunk/navit navit 
+  else
+    svn up navit
+  fi
+  cd navit
+  rm -rf build
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake
+  make -j4
+  make install
 fi
-cd navit
-rm -rf build
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake
-make -j4
-make install
 
+# creating directories
+OUT_PATH=/tmp/sdcard
+rm -rf $OUT_PATH
+mkdir -p $OUT_PATH
+cd $OUT_PATH
+mkdir -p navit SDKRegistry
+cd navit
+mkdir -p bin lib share sdl ts
+
+# libraries
+cp $PREFIX/lib/libSDL-1.2.so.0 lib/libSDL-1.2.so
+cp $PREFIX/lib/libSDL_image.so lib
+cp $PREFIX/lib/libfontconfig.so lib
+cp $PREFIX/lib/libgio-2.0.so lib
+cp $PREFIX/lib/libglib-2.0.so lib
+cp $PREFIX/lib/libgmodule-2.0.so lib 
+cp $PREFIX/lib/libgobject-2.0.so lib
+cp $PREFIX/lib/libgthread-2.0.so lib
+cp $PREFIX/lib/libpng.so lib
+cp $PREFIX/lib/libpng12.so lib
+cp $PREFIX/lib/libts-1.0.so.0 lib/libts-1.0.so
+cp $PREFIX/lib/libts.so lib
+cp $PREFIX/lib/libxml2.so lib
+cp $PREFIX/lib/librt.so.1 lib/librt.so
+cp $PREFIX/lib/libthread_db.so.1 lib/libthread_db.so
+cp $PREFIX/etc/ts.conf .
+
+# navit executable and wrapper
+cp $PREFIX/bin/navit bin/
+cat > bin/navit-wrapper << EOF
+#!/bin/sh
+ 
+cd /mnt/sdcard
+
+# Set some paths.
+export PATH=\$PATH:/mnt/sdcard/navit/bin
+export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/mnt/sdcard/navit/lib
+export HOME=/mnt/sdcard/
+export NAVIT_LIBDIR=/mnt/sdcard/navit/lib/navit
+export NAVIT_SHAREDIR=/mnt/sdcard/navit/share
+
+# tslib requirements.
+export TSLIB_CONSOLEDEVICE=none
+export TSLIB_FBDEVICE=/dev/fb
+export TSLIB_TSDEVICE=/dev/ts
+export TSLIB_CALIBFILE=/mnt/sdcard/navit/ts/pointercal
+export TSLIB_CONFFILE=/mnt/sdcard/navit/ts/ts.conf
+export TSLIB_PLUGINDIR=/mnt/sdcard/navit/lib/ts
+
+# SDL requirements.
+export SDL_MOUSEDRV=TSLIB
+export SDL_MOUSEDEV=\$TSLIB_TSDEVICE
+export SDL_NOMOUSE=1
+export SDL_FBDEV=/dev/fb
+export SDL_VIDEODRIVER=fbcon
+export SDL_AUDIODRIVER=dsp
+
+# fontconfig requirements
+export FC_CONFIG_DIR=/mnt/sdcard/navit/fonts
+export FONTCONFIG_DIR=/mnt/sdcard/navit/fonts
+export FC_CONFIG_FILE=/mnt/sdcard/navit/fonts/fonts.conf
+export FONTCONFIG_FILE=/mnt/sdcard/navit/fonts/fonts.conf
+export FC_DEBUG=0
+
+# Set language.
+export LANG=en_US.utf8
+
+# Run Navit.
+/mnt/sdcard/navit/bin/navit /mnt/sdcard/navit/share/navit.xml 2>/mnt/sdcard/navit/navit.log
+EOF
+chmod a+rx bin/navit-wrapper
+
+# copy the images 
+cd share
+cp -r $PREFIX/share/navit/xpm ./
+cp $PREFIX/share/navit/navit.xml ./
+mkdir -p maps
+
+
+# add a menu button
+cat > $OUT_PATH/SDKRegistry/navit.cap << EOF
+Version|100|
+AppName|navit-wrapper|
+AppPath|/mnt/sdcard/navit/bin/|
+AppIconFile|navit.bmp|
+AppMainTitle|Navit|
+AppPort||
+COMMAND|CMD|hallo|navit.bmp|Navit|
+EOF
+convert /tmp/navit/navit/xpm/desktop_icons/128x128/navit.png -size 48x48 $OUT_PATH/SDKRegistry/navit.bmp
+
+# get a map!
+wget -c http://jff-webhosting.net/osm/navit/world/navitmap_osm_oceania.bin -P /tmp
+cp /tmp/navitmap_osm_oceania.bin $OUT_PATH/navit/share/maps
+sed -i "723i\<mapset> <map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/navitmap_osm_oceania.bin\" /></mapset>" $OUT_PATH/navit/share/navit.xml
+
+# configure navit
+sed -i "s|<debug name=\"segv\" level=\"1\"/>|<debug name=\"segv\" level=\"0\"/>|g" $OUT_PATH/navit/share/navit.xml
+sed -i "s|<graphics type=\"gtk_drawing_area\"/>|<graphics type=\"sdl\" w=\"320\" h=\"240\" bpp=\"16\" frame=\"0\" flags=\"1\"/>|g" $OUT_PATH/navit/share/navit.xml
+sed -i "s|source=\"gpsd://localhost\" gpsd_query=\"w+xj\"|source=\"file:/var/run/gpsfeed\"|g" $OUT_PATH/navit/share/navit.xml
 
 
