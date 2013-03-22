@@ -5,9 +5,12 @@
 
 set -e
 
+cp arm-tomtom.cmake /tmp
+
 # toolchain
-export PATH=/opt/tomtom-sdk/gcc-3.3.4_glibc-2.3.2/bin:$PATH
-export PREFIX=/opt/tomtom-sdk/gcc-3.3.4_glibc-2.3.2/arm-linux/sys-root
+export TOMTOM_SDK_DIR=/opt/tomtom-sdk
+export PATH=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/bin:$PATH
+export PREFIX=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/arm-linux/sys-root
 export CFLAGS="-O2 -I$PREFIX/include -I$PREFIX/usr/include"
 export CPPFLAGS="-I$PREFIX/include -I$PREFIX/usr/include"
 export LDFLAGS="-L$PREFIX/lib -L$PREFIX/usr/lib"
@@ -26,8 +29,8 @@ if ! test -d "$PREFIX"
 then
   cd /tmp
   wget -c http://www.tomtom.com/gpl/toolchain_redhat_gcc-3.3.4_glibc-2.3.2-20060131a.tar.gz
-  mkdir -p /opt/tomtom-sdk
-  tar xzf toolchain_redhat_gcc-3.3.4_glibc-2.3.2-20060131a.tar.gz -C /opt/tomtom-sdk
+  mkdir -p $TOMTOM_SDK_DIR
+  tar xzf toolchain_redhat_gcc-3.3.4_glibc-2.3.2-20060131a.tar.gz -C $TOMTOM_SDK_DIR
 fi
 
 # zlib
@@ -149,6 +152,9 @@ then
   make install
 fi
 
+# to find sdl-config
+export PATH=$PREFIX/bin:$PATH
+
 # sdl image
 if ! test -f "$PREFIX/include/SDL/SDL_image.h"
 then
@@ -156,22 +162,37 @@ then
   wget -c http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz
   tar xzf SDL_image-1.2.12.tar.gz
   cd SDL_image-1.2.12
-  PATH="$PATH:$PREFIX/bin" ./configure --prefix=$PREFIX --host=arm-linux
+  ./configure --prefix=$PREFIX --host=arm-linux
   make
   make install
 fi
 
+# sdl ttf
+# if ! test -f "$PREFIX/include/SDL/SDL_ttf.h"
+# then
+#   cd /tmp
+#   wget -c http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.11.tar.gz
+#   tar xzf SDL_ttf-2.0.11.tar.gz
+#   cd SDL_ttf-2.0.11
+#   ./configure --prefix=$PREFIX --host=arm-linux --with-sdl-prefix=$PREFIX
+#   make
+#   make install
+# fi
+
 # navit
 cd /tmp
-# rm -rf navit
-# svn co https://navit.svn.sourceforge.net/svnroot/navit/trunk/navit navit 
+if ! test -d navit
+then
+  svn co https://navit.svn.sourceforge.net/svnroot/navit/trunk/navit navit 
+else
+  svn up
+fi
 cd navit
+rm -rf build
 mkdir build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX
-# ./configure --prefix=$PREFIX --host=arm-linux --disable-graphics-gtk-drawing-area --disable-gui-gtk \
-#  --disable-graphics-qt-qpainter --disable-binding-dbus --disable-fribidi --enable-cache-size=16777216
-make
+cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake
+make -j4
 make install
 
 

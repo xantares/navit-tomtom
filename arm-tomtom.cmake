@@ -1,8 +1,13 @@
-SET(CMAKE_SYSTEM_NAME WINCE)
+set ( CMAKE_SYSTEM_NAME GNU )
 
 # specify the cross compiler
-FIND_PROGRAM(CMAKE_C_COMPILER NAMES arm-mingw32ce-gcc arm-wince-mingw32ce-gcc)
-FIND_PROGRAM(CMAKE_CXX_COMPILER NAMES arm-mingw32ce-g++ arm-wince-mingw32ce-g++)
-FIND_PROGRAM(CMAKE_RC_COMPILER_INIT NAMES arm-mingw32ce-windres arm-wince-mingw32ce-windres)
-SET(PKG_CONFIG_EXECUTABLE "arm-mingw32ce-pkg-config")
-SET(WINCE TRUE)
+find_program ( CMAKE_C_COMPILER NAMES arm-linux-gcc )
+find_program ( CMAKE_CXX_COMPILER NAMES arm-linux-g++ )
+
+set ( TOMTOM_SDK_DIR /opt/tomtom-sdk )
+set ( CMAKE_FIND_ROOT_PATH ${TOMTOM_SDK_DIR} )
+
+set ( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER )
+set ( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY )
+set ( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
+set ( CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY )
