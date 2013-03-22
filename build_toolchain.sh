@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# installs tomtom toolchain according instructions from:
+# http://wiki.navit-project.org/index.php/TomTom_development
+
 # toolchain
 export PATH=/opt/tomtom-sdk/gcc-3.3.4_glibc-2.3.2/bin:$PATH
 export PREFIX=/opt/tomtom-sdk/gcc-3.3.4_glibc-2.3.2/arm-linux/sys-root
@@ -34,7 +37,7 @@ then
   cd zlib-1.2.7
 
   ./configure --prefix=$PREFIX
-  make
+  make -j4
   make install
 fi
 
@@ -42,11 +45,12 @@ fi
 if ! test -f "$PREFIX/include/libxml2/libxml/parser.h"
 then
   cd /tmp/
-  wget -c ftp://xmlsoft.org/libxml2/libxml2-2.9.0.tar.gz
-  tar xzf libxml2-2.9.0.tar.gz
-  cd libxml2-2.9.0/
+#   wget -c ftp://xmlsoft.org/libxml2/libxml2-2.9.0.tar.gz
+  wget -c http://xmlsoft.org/sources/libxml2-2.7.8.tar.gz
+  tar xzf libxml2-2.7.8.tar.gz
+  cd libxml2-2.7.8/
   ./configure --prefix=$PREFIX --host=arm-linux --without-python
-  make
+  make -j4
   make install
 fi
 
@@ -58,37 +62,97 @@ then
   tar xzf libpng-1.2.50.tar.gz
   cd libpng-1.2.50/
   ./configure --prefix=$PREFIX --host=arm-linux
-  make
+  make -j4
   make install
 fi
   
 # libjpeg
-if ! test -f "$PREFIX/bin/cjpeg"
+if ! test -f "$PREFIX/include/jpeglib.h"
 then
   cd /tmp
-  wget -c http://prdownloads.sourceforge.net/libjpeg/jpegsrc.v6b.tar.gz
-  tar xzf jpegsrc.v6b.tar.gz
-  cd jpeg-6b/
-  mkdir -p $PREFIX/man/man1
+  wget -c http://www.ijg.org/files/jpegsrc.v9.tar.gz
+  tar xzf jpegsrc.v9.tar.gz
+  cd jpeg-9
   ./configure --prefix=$PREFIX --host=arm-linux
-  make
+  make -j4
   make install
 fi
 
+# fontconfig
+if ! test -f "$PREFIX/include/fontconfig/fontconfig.h"
+then
+  cd /tmp
+  wget -c http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.10.91.tar.gz
+  tar xzf fontconfig-2.10.91.tar.gz
+  cd fontconfig-2.10.91
+  ./configure --prefix=$PREFIX --host=arm-linux --with-arch=arm --enable-libxml2
+  make -j4
+  make install
+fi
 
-cd /tmp
-wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.35/glib-2.35.9.tar.xz
-rm -rf glib-2.35.9
-tar xf glib-2.35.9.tar.xz
-cd glib-2.35.9
-cat > tomtom.cache << EOF
+# glib
+if ! test -f "$PREFIX/include/glib-2.0/glib.h"
+then
+  cd /tmp
+  wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.22/glib-2.22.2.tar.gz
+  tar xzf glib-2.22.2.tar.gz
+  cd glib-2.22.2
+  cat > tomtom.cache << EOF
 glib_cv_long_long_format=ll
 glib_cv_stack_grows=no
 glib_cv_uscore=no
 ac_cv_func_posix_getgrgid_r=yes
 ac_cv_func_posix_getpwuid_r=yes
 EOF
-chmod a-w tomtom.cache
-./configure --prefix=$PREFIX --host=arm-linux --cache-file=tomtom.cache
-make
-make install
+  chmod a-w tomtom.cache
+  ./configure --prefix=$PREFIX --host=arm-linux --cache-file=tomtom.cache
+  make -j4
+  make install
+fi
+
+# tslib
+if ! test -f "$PREFIX/include/tslib.h"
+then
+  cd /tmp
+  rm -rf tslib-svn
+  git clone https://github.com/playya/tslib-svn.git
+  cd tslib-svn
+  sed -i "119i\#ifdef EVIOCGRAB" plugins/input-raw.c
+  sed -i "124i\#endif" plugins/input-raw.c
+  sed -i "290i\#ifdef EVIOCGRAB" plugins/input-raw.c
+  sed -i "294i\#endif" plugins/input-raw.c
+  sed -i "s|# module_raw input|module_raw input|g" etc/ts.conf # tomtom one
+  ./autogen.sh
+  ./configure --prefix=$PREFIX --host=arm-linux
+  make -j4
+  make install
+fi
+
+# sdl
+if ! test -f "$PREFIX/include/SDL/SDL.h"
+then
+  cd /tmp
+  wget -c http://www.libsdl.org/release/SDL-1.2.13.tar.gz
+  tar xzf SDL-1.2.13.tar.gz
+  cd SDL-1.2.13
+  wget -c http://tracks.yaina.de/source/sdl-fbcon-notty.patch
+  patch -p0 -i sdl-fbcon-notty.patch
+  ./configure --prefix=$PREFIX --host=arm-linux \
+    --disable-esd --disable-joystick --disable-cdrom --disable-video-x11 \
+    --disable-x11-vm --disable-dga --disable-video-x11-dgamouse \
+    --disable-video-x11-xv --disable-video-x11-xinerama --disable-video-directfb \
+    --enable-video-fbcon --disable-audio CFLAGS="$CFLAGS -DFBCON_NOTTY"
+  make -j4
+  make install
+fi
+
+# sdl image
+if ! test -f "$PREFIX/include/SDL/SDL_image.h"
+then
+  wget -c http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz
+  tar xzf SDL_image-1.2.12.tar.gz
+  cd SDL_image-1.2.12
+  PATH="$PATH:$PREFIX/bin" ./configure --prefix=$PREFIX --host=arm-linux
+  make
+  make install
+fi
