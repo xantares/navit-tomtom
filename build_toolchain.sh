@@ -3,6 +3,8 @@
 # installs tomtom toolchain according instructions from:
 # http://wiki.navit-project.org/index.php/TomTom_development
 
+set -e
+
 # toolchain
 export PATH=/opt/tomtom-sdk/gcc-3.3.4_glibc-2.3.2/bin:$PATH
 export PREFIX=/opt/tomtom-sdk/gcc-3.3.4_glibc-2.3.2/arm-linux/sys-root
@@ -94,9 +96,9 @@ fi
 if ! test -f "$PREFIX/include/glib-2.0/glib.h"
 then
   cd /tmp
-  wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.22/glib-2.22.2.tar.gz
-  tar xzf glib-2.22.2.tar.gz
-  cd glib-2.22.2
+  wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.25/glib-2.25.17.tar.gz
+  tar xzf glib-2.25.17.tar.gz
+  cd glib-2.25.17
   cat > tomtom.cache << EOF
 glib_cv_long_long_format=ll
 glib_cv_stack_grows=no
@@ -117,6 +119,7 @@ then
   rm -rf tslib-svn
   git clone https://github.com/playya/tslib-svn.git
   cd tslib-svn
+  sed -i "s|AM_CONFIG_HEADER|AC_CONFIG_HEADERS|g" configure.ac
   sed -i "119i\#ifdef EVIOCGRAB" plugins/input-raw.c
   sed -i "124i\#endif" plugins/input-raw.c
   sed -i "290i\#ifdef EVIOCGRAB" plugins/input-raw.c
@@ -149,6 +152,7 @@ fi
 # sdl image
 if ! test -f "$PREFIX/include/SDL/SDL_image.h"
 then
+  cd /tmp
   wget -c http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz
   tar xzf SDL_image-1.2.12.tar.gz
   cd SDL_image-1.2.12
@@ -156,3 +160,19 @@ then
   make
   make install
 fi
+
+# navit
+cd /tmp
+# rm -rf navit
+# svn co https://navit.svn.sourceforge.net/svnroot/navit/trunk/navit navit 
+cd navit
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX
+# ./configure --prefix=$PREFIX --host=arm-linux --disable-graphics-gtk-drawing-area --disable-gui-gtk \
+#  --disable-graphics-qt-qpainter --disable-binding-dbus --disable-fribidi --enable-cache-size=16777216
+make
+make install
+
+
+
