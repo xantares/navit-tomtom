@@ -37,9 +37,9 @@ fi
 if ! test -f "$PREFIX/include/zlib.h"
 then
   cd /tmp
-  wget -c http://zlib.net/zlib-1.2.7.tar.gz
-  tar xzf zlib-1.2.7.tar.gz
-  cd zlib-1.2.7
+  wget -c http://zlib.net/zlib-1.2.8.tar.gz
+  tar xzf zlib-1.2.8.tar.gz
+  cd zlib-1.2.8
 
   ./configure --prefix=$PREFIX
   make -j4
