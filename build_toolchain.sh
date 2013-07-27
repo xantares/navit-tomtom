@@ -9,8 +9,8 @@ cp arm-tomtom.cmake /tmp
 
 # toolchain
 export TOMTOM_SDK_DIR=/opt/tomtom-sdk
-export PATH=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/bin:$PATH
 export PREFIX=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/arm-linux/sys-root
+export PATH=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/bin:$PREFIX/bin/:$PATH
 export CFLAGS="-O2 -I$PREFIX/include -I$PREFIX/usr/include"
 export CPPFLAGS="-I$PREFIX/include -I$PREFIX/usr/include"
 export LDFLAGS="-L$PREFIX/lib -L$PREFIX/usr/lib"
@@ -23,6 +23,7 @@ export RANLIB=arm-linux-ranlib
 export STRIP=arm-linux-strip
 export OBJCOPY=arm-linux-objcopy
 export LN_S="ln -s"
+export PKG_CONFIG_LIBDIR=$PREFIX/lib/pkgconfig
 
 # toolchain
 if ! test -d "$PREFIX"
@@ -83,14 +84,27 @@ then
   make install
 fi
 
+# freetype
+if ! test -f "$PREFIX/include/freetype2/freetype/freetype.h"
+then
+  cd /tmp
+  wget -c http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
+  tar xzf freetype-2.5.0.tar.gz
+  cd freetype-2.5.0
+  ./configure --prefix=$PREFIX --host=arm-linux
+  make -j4
+  make install
+fi
+
 # fontconfig
 if ! test -f "$PREFIX/include/fontconfig/fontconfig.h"
 then
   cd /tmp
-  wget -c http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.10.91.tar.gz
-  tar xzf fontconfig-2.10.91.tar.gz
+#   wget -c http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.10.91.tar.gz
+  wget -c http://pkgs.fedoraproject.org/repo/pkgs/fontconfig/fontconfig-2.10.91.tar.bz2/c795bb39fab3a656e5dff8bad6a199f6/fontconfig-2.10.91.tar.bz2
+  tar xjf fontconfig-2.10.91.tar.bz2
   cd fontconfig-2.10.91
-  LIBXML2_CFLAGS="-I$PREFIX/include/libxml2" LIBXML2_LIBS="-L$PREFIX/lib -lxml2" ./configure --prefix=$PREFIX --host=arm-linux --with-arch=arm --enable-libxml2
+  ./configure --prefix=$PREFIX --host=arm-linux --with-arch=arm --enable-libxml2
   make -j4
   make install
 fi
@@ -111,6 +125,7 @@ ac_cv_func_posix_getpwuid_r=yes
 EOF
   chmod a-w tomtom.cache
   ./configure --prefix=$PREFIX --host=arm-linux --cache-file=tomtom.cache
+  sed -i "s|cp xgen-gmc gmarshal.c |cp xgen-gmc gmarshal.c \&\& sed -i \"s\|g_value_get_schar\|g_value_get_char\|g\" gmarshal.c |g" gobject/Makefile
   make -j4
   make install
 fi
@@ -193,7 +208,7 @@ then
   rm -rf build
   mkdir build
   cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake
+  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake -DXSLTS=osd_minimum
   make -j4
   make install
 fi
