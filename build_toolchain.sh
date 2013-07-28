@@ -205,10 +205,11 @@ then
     svn up navit
   fi
   cd navit
+  sed -i "s|SAXON_ERROR ERROR_QUIET|SAXON_ERROR OUTPUT_QUIET ERROR_QUIET|g" CMakeLists.txt
   rm -rf build
   mkdir build
   cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake -DXSLTS=osd_minimum
+  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake -DDISABLE_QT=ON
   make -j4
   make install
 fi
