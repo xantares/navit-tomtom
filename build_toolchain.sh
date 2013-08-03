@@ -3,6 +3,10 @@
 # installs tomtom toolchain according instructions from:
 # http://wiki.navit-project.org/index.php/TomTom_development
 
+# you'll need some packages:
+# - gettext
+# - libglib2.0-dev for glib-genmarshal
+
 set -e
 
 cp arm-tomtom.cmake /tmp
