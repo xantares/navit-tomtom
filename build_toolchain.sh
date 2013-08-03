@@ -28,7 +28,7 @@ export STRIP=arm-linux-strip
 export OBJCOPY=arm-linux-objcopy
 export LN_S="ln -s"
 export PKG_CONFIG_LIBDIR=$PREFIX/lib/pkgconfig
-export MAKEFLAGS=-j2
+export MAKEFLAGS="-j`getconf _NPROCESSORS_ONLN`"
 
 # toolchain
 if ! test -d "$PREFIX"
