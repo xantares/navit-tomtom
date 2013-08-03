@@ -6,6 +6,7 @@
 # you'll need some packages:
 # - gettext
 # - libglib2.0-dev for glib-genmarshal
+# - autoconf; libtool
 
 set -e
 
@@ -28,7 +29,7 @@ export STRIP=arm-linux-strip
 export OBJCOPY=arm-linux-objcopy
 export LN_S="ln -s"
 export PKG_CONFIG_LIBDIR=$PREFIX/lib/pkgconfig
-export MAKEFLAGS="-j`getconf _NPROCESSORS_ONLN`"
+JOBS=`getconf _NPROCESSORS_ONLN`
 
 # toolchain
 if ! test -d "$PREFIX"
@@ -48,7 +49,7 @@ then
   cd zlib-1.2.8
 
   ./configure --prefix=$PREFIX
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -61,7 +62,7 @@ then
   tar xzf libxml2-2.7.8.tar.gz
   cd libxml2-2.7.8/
   ./configure --prefix=$PREFIX --host=arm-linux --without-python
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -73,7 +74,7 @@ then
   tar xzf libpng-1.2.50.tar.gz
   cd libpng-1.2.50/
   ./configure --prefix=$PREFIX --host=arm-linux
-  make
+  make -j$JOBS
   make install
 fi
   
@@ -85,7 +86,7 @@ then
   tar xzf jpegsrc.v9.tar.gz
   cd jpeg-9
   ./configure --prefix=$PREFIX --host=arm-linux
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -97,7 +98,7 @@ then
   tar xzf freetype-2.5.0.tar.gz
   cd freetype-2.5.0
   ./configure --prefix=$PREFIX --host=arm-linux
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -110,7 +111,7 @@ then
   tar xjf fontconfig-2.10.91.tar.bz2
   cd fontconfig-2.10.91
   ./configure --prefix=$PREFIX --host=arm-linux --with-arch=arm --enable-libxml2
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -131,7 +132,7 @@ EOF
   chmod a-w tomtom.cache
   ./configure --prefix=$PREFIX --host=arm-linux --cache-file=tomtom.cache
   sed -i "s|cp xgen-gmc gmarshal.c |cp xgen-gmc gmarshal.c \&\& sed -i \"s\|g_value_get_schar\|g_value_get_char\|g\" gmarshal.c |g" gobject/Makefile
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -150,7 +151,7 @@ then
   sed -i "s|# module_raw input|module_raw input|g" etc/ts.conf # tomtom one
   ./autogen.sh
   ./configure --prefix=$PREFIX --host=arm-linux
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -168,7 +169,7 @@ then
     --disable-x11-vm --disable-dga --disable-video-x11-dgamouse \
     --disable-video-x11-xv --disable-video-x11-xinerama --disable-video-directfb \
     --enable-video-fbcon --disable-audio CFLAGS="$CFLAGS -DFBCON_NOTTY"
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -183,7 +184,7 @@ then
   tar xzf SDL_image-1.2.12.tar.gz
   cd SDL_image-1.2.12
   ./configure --prefix=$PREFIX --host=arm-linux
-  make
+  make -j$JOBS
   make install
 fi
 
@@ -215,7 +216,7 @@ then
   mkdir build
   cd build
   cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake -DDISABLE_QT=ON
-  make
+  make -j$JOBS
   make install
 fi
 
