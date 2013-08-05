@@ -7,6 +7,7 @@
 # - gettext
 # - libglib2.0-dev for glib-genmarshal
 # - autoconf; libtool
+# - librsvg2-bin for rsvg-convert
 
 set -e
 
