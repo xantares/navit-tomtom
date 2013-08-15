@@ -13,10 +13,11 @@
 
 set -e
 
-cp arm-tomtom.cmake /tmp
+cp toolchain-arm-linux.cmake /tmp
 
 # toolchain
 export TOMTOM_SDK_DIR=/opt/tomtom-sdk
+mkdir -p $TOMTOM_SDK_DIR || export TOMTOM_SDK_DIR=$HOME/tomtom-sdk
 export PREFIX=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/arm-linux/sys-root
 export PATH=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/bin:$PREFIX/bin/:$PATH
 export CFLAGS="-O2 -I$PREFIX/include -I$PREFIX/usr/include"
@@ -216,7 +217,8 @@ then
   rm -rf build
   mkdir build
   cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/arm-tomtom.cmake -DDISABLE_QT=ON
+  sed -i "s|set ( TOMTOM_SDK_DIR /opt/tomtom-sdk )|set ( TOMTOM_SDK_DIR $TOMTOM_SDK_DIR )|g" /tmp/toolchain-arm-linux.cmake
+  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-arm-linux.cmake -DDISABLE_QT=ON
   make -j$JOBS
   make install
 fi
@@ -313,9 +315,9 @@ EOF
 convert /tmp/navit/navit/xpm/desktop_icons/128x128/navit.png -size 48x48 $OUT_PATH/SDKRegistry/navit.bmp
 
 # get a map!
-wget -c http://jff-webhosting.net/osm/navit/world/navitmap_osm_oceania.bin -P /tmp
-cp /tmp/navitmap_osm_oceania.bin $OUT_PATH/navit/share/maps
-sed -i "723i\<mapset> <map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/navitmap_osm_oceania.bin\" /></mapset>" $OUT_PATH/navit/share/navit.xml
+wget -c http://deelkar.dev.openstreetmap.org/maps/osm_france.bin -P /tmp
+cp /tmp/osm_france.bin $OUT_PATH/navit/share/maps
+sed -i "723i\<mapset> <map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/osm_france.bin\" /></mapset>" $OUT_PATH/navit/share/navit.xml
 
 # configure navit
 sed -i "s|<debug name=\"segv\" level=\"1\"/>|<debug name=\"segv\" level=\"0\"/>|g" $OUT_PATH/navit/share/navit.xml
