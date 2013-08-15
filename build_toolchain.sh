@@ -7,8 +7,9 @@
 # - wget
 # - gettext
 # - libglib2.0-dev for glib-genmarshal
-# - autoconf; libtool
+# - automake, autoconf, libtool
 # - librsvg2-bin for rsvg-convert
+# - gcc-libs-multilib
 
 set -e
 
@@ -49,7 +50,6 @@ then
   wget -c http://zlib.net/zlib-1.2.8.tar.gz
   tar xzf zlib-1.2.8.tar.gz
   cd zlib-1.2.8
-
   ./configure --prefix=$PREFIX
   make -j$JOBS
   make install
