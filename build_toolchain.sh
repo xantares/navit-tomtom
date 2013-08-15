@@ -4,6 +4,7 @@
 # http://wiki.navit-project.org/index.php/TomTom_development
 
 # you'll need some packages:
+# - wget
 # - gettext
 # - libglib2.0-dev for glib-genmarshal
 # - autoconf; libtool
