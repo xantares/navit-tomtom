@@ -218,9 +218,10 @@ then
   mkdir -p build
   cd build
   sed -i "s|set ( TOMTOM_SDK_DIR /opt/tomtom-sdk )|set ( TOMTOM_SDK_DIR $TOMTOM_SDK_DIR )|g" /tmp/toolchain-$ARCH.cmake
-  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-$ARCH.cmake -DDISABLE_QT=ON
+  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-$ARCH.cmake -DDISABLE_QT=ON -DSHARED_LIBNAVIT=ON
   make -j$JOBS
   make install
+  cp navit/libnavit_core.so $PREFIX/lib
 fi
 
 # creating directories
@@ -230,13 +231,14 @@ mkdir -p $OUT_PATH
 cd $OUT_PATH
 mkdir -p navit SDKRegistry
 cd navit
-mkdir -p bin lib share sdl ts
+mkdir -p bin lib share sdl ts fonts
 
 # libraries
+cp $PREFIX/lib/libnavit_core.so lib
 cp $PREFIX/lib/libfreetype.so.6 lib
 cp $PREFIX/lib/libSDL-1.2.so.0 lib
 cp $PREFIX/lib/libSDL_image-1.2.so.0 lib
-cp $PREFIX/lib/libfontconfig.so lib
+cp $PREFIX/lib/libfontconfig.so.1 lib
 cp $PREFIX/lib/libgio-2.0.so lib
 cp $PREFIX/lib/libglib-2.0.so.0 lib
 cp $PREFIX/lib/libgmodule-2.0.so.0 lib
@@ -245,11 +247,11 @@ cp $PREFIX/lib/libgthread-2.0.so lib
 cp $PREFIX/lib/libpng12.so.0 lib
 cp $PREFIX/lib/libts-1.0.so.0 lib
 cp $PREFIX/lib/libts.so lib
-cp $PREFIX/lib/libxml2.so lib
+cp $PREFIX/lib/libxml2.so.2 lib
 cp $PREFIX/lib/librt.so.1 lib
 cp $PREFIX/lib/libthread_db.so.1 lib
 cp $PREFIX/lib/libz.so.1 lib
-cp $PREFIX/etc/ts.conf .
+cp $PREFIX/etc/ts.conf ts
 
 # navit executable and wrapper
 cp $PREFIX/bin/navit bin/
@@ -298,15 +300,23 @@ export LANG=en_US.utf8
 EOF
 chmod a+rx bin/navit-wrapper
 
-# copy plugins
+# plugins
 cp -r $PREFIX/lib/navit $OUT_PATH/navit/lib/
 
-# copy the images 
+# font
+mkdir -p $OUT_PATH/navit/fonts/conf.d
+cp $PREFIX/etc/fonts/fonts.conf $OUT_PATH/navit/fonts
+cp -r $PREFIX/share/fontconfig/conf.avail/* $OUT_PATH/navit/fonts/conf.d
+
+# ts
+cp -r $PREFIX/lib/ts $OUT_PATH/navit/lib/
+touch $OUT_PATH/navit/ts/pointercal
+
+# images 
 cd share
 cp -r $PREFIX/share/navit/xpm ./
 cp $PREFIX/share/navit/navit.xml ./
 mkdir -p maps
-
 
 # add a menu button
 cat > $OUT_PATH/SDKRegistry/navit.cap << EOF
