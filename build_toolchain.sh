@@ -234,7 +234,7 @@ mkdir -p $OUT_PATH
 cd $OUT_PATH
 mkdir -p navit SDKRegistry
 cd navit
-mkdir -p bin lib share sdl ts fonts
+mkdir -p bin lib share sdl ts
 
 # libraries
 cp $PREFIX/lib/libnavit_core.so lib
@@ -288,10 +288,8 @@ export SDL_VIDEODRIVER=fbcon
 export SDL_AUDIODRIVER=dsp
 
 # fontconfig requirements
-export FC_CONFIG_DIR=/mnt/sdcard/navit/fonts
-export FONTCONFIG_DIR=/mnt/sdcard/navit/fonts
-export FC_CONFIG_FILE=/mnt/sdcard/navit/fonts/fonts.conf
-export FONTCONFIG_FILE=/mnt/sdcard/navit/fonts/fonts.conf
+export FONTCONFIG_PATH=/mnt/sdcard/navit/share/fonts
+export FONTCONFIG_FILE=/mnt/sdcard/navit/share/fonts/fonts.conf
 export FC_DEBUG=0
 
 # Set language.
@@ -306,14 +304,14 @@ chmod a+rx bin/navit-wrapper
 # plugins
 cp -r $PREFIX/lib/navit $OUT_PATH/navit/lib/
 
-# font
-mkdir -p $OUT_PATH/navit/fonts/conf.d
-cp $PREFIX/etc/fonts/fonts.conf $OUT_PATH/navit/fonts
-sed -i "s|/usr/share/fonts|/mnt/sdcard/navit/fonts|g" $OUT_PATH/navit/fonts/fonts.conf
-sed -i "s|$PREFIX/etc/fonts/conf.d|/mnt/sdcard/navit/fonts/conf.d|g" $OUT_PATH/navit/fonts/fonts.conf
-sed -i "s|$PREFIX/var/cache/fontconfig|/var/cache/fontconfig|g" $OUT_PATH/navit/fonts/fonts.conf
-
-cp -r $PREFIX/share/fontconfig/conf.avail/* $OUT_PATH/navit/fonts/conf.d
+# fonts
+cp -r /tmp/navit/navit/fonts $OUT_PATH/navit/share
+cp $PREFIX/etc/fonts/fonts.conf $OUT_PATH/navit/share/fonts
+sed -i "s|/usr/share/fonts|/mnt/sdcard/navit/share/fonts|g" $OUT_PATH/navit/share/fonts/fonts.conf
+sed -i "s|$PREFIX/etc/fonts/conf.d|/mnt/sdcard/navit/share/fonts/conf.d|g" $OUT_PATH/navit/share/fonts/fonts.conf
+sed -i "s|$PREFIX/var/cache/fontconfig|/var/cache/fontconfig|g" $OUT_PATH/navit/share/fonts/fonts.conf
+mkdir $OUT_PATH/navit/share/fonts/conf.d
+cp -r $PREFIX/share/fontconfig/conf.avail/* $OUT_PATH/navit/share/fonts/conf.d
 
 # ts
 cp -r $PREFIX/lib/ts $OUT_PATH/navit/lib/
