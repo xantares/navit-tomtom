@@ -13,24 +13,25 @@
 
 set -e
 
-cp toolchain-arm-linux.cmake /tmp
+export ARCH=arm-linux
+cp toolchain-$ARCH.cmake /tmp
 
 # toolchain
 export TOMTOM_SDK_DIR=/opt/tomtom-sdk
-mkdir -p $TOMTOM_SDK_DIR || export TOMTOM_SDK_DIR=$HOME/tomtom-sdk
-export PREFIX=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/arm-linux/sys-root
+mkdir -p $TOMTOM_SDK_DIR >/dev/null 2>&1 || export TOMTOM_SDK_DIR=$HOME/tomtom-sdk 
+export PREFIX=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/$ARCH/sys-root
 export PATH=$TOMTOM_SDK_DIR/gcc-3.3.4_glibc-2.3.2/bin:$PREFIX/bin/:$PATH
 export CFLAGS="-O2 -I$PREFIX/include -I$PREFIX/usr/include"
 export CPPFLAGS="-I$PREFIX/include -I$PREFIX/usr/include"
 export LDFLAGS="-L$PREFIX/lib -L$PREFIX/usr/lib"
-export CC=arm-linux-gcc
-export CXX=arm-linux-g++
-export LD=arm-linux-ld
-export NM="arm-linux-nm -B"
-export AR=arm-linux-ar
-export RANLIB=arm-linux-ranlib
-export STRIP=arm-linux-strip
-export OBJCOPY=arm-linux-objcopy
+export CC=$ARCH-gcc
+export CXX=$ARCH-g++
+export LD=$ARCH-ld
+export NM="$ARCH-nm -B"
+export AR=$ARCH-ar
+export RANLIB=$ARCH-ranlib
+export STRIP=$ARCH-strip
+export OBJCOPY=$ARCH-objcopy
 export LN_S="ln -s"
 export PKG_CONFIG_LIBDIR=$PREFIX/lib/pkgconfig
 JOBS=`getconf _NPROCESSORS_ONLN`
@@ -64,7 +65,7 @@ then
   wget -c http://xmlsoft.org/sources/libxml2-2.7.8.tar.gz
   tar xzf libxml2-2.7.8.tar.gz
   cd libxml2-2.7.8/
-  ./configure --prefix=$PREFIX --host=arm-linux --without-python
+  ./configure --prefix=$PREFIX --host=$ARCH --without-python
   make -j$JOBS
   make install
 fi
@@ -76,7 +77,7 @@ then
   wget -c http://prdownloads.sourceforge.net/libpng/libpng-1.2.50.tar.gz
   tar xzf libpng-1.2.50.tar.gz
   cd libpng-1.2.50/
-  ./configure --prefix=$PREFIX --host=arm-linux
+  ./configure --prefix=$PREFIX --host=$ARCH
   make -j$JOBS
   make install
 fi
@@ -88,7 +89,7 @@ then
   wget -c http://www.ijg.org/files/jpegsrc.v9.tar.gz
   tar xzf jpegsrc.v9.tar.gz
   cd jpeg-9
-  ./configure --prefix=$PREFIX --host=arm-linux
+  ./configure --prefix=$PREFIX --host=$ARCH
   make -j$JOBS
   make install
 fi
@@ -100,7 +101,7 @@ then
   wget -c http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
   tar xzf freetype-2.5.0.tar.gz
   cd freetype-2.5.0
-  ./configure --prefix=$PREFIX --host=arm-linux
+  ./configure --prefix=$PREFIX --host=$ARCH
   make -j$JOBS
   make install
 fi
@@ -113,7 +114,7 @@ then
   wget -c http://pkgs.fedoraproject.org/repo/pkgs/fontconfig/fontconfig-2.10.91.tar.bz2/c795bb39fab3a656e5dff8bad6a199f6/fontconfig-2.10.91.tar.bz2
   tar xjf fontconfig-2.10.91.tar.bz2
   cd fontconfig-2.10.91
-  ./configure --prefix=$PREFIX --host=arm-linux --with-arch=arm --enable-libxml2
+  ./configure --prefix=$PREFIX --host=$ARCH --with-arch=arm --enable-libxml2
   make -j$JOBS
   make install
 fi
@@ -133,7 +134,7 @@ ac_cv_func_posix_getgrgid_r=yes
 ac_cv_func_posix_getpwuid_r=yes
 EOF
   chmod a-w tomtom.cache
-  ./configure --prefix=$PREFIX --host=arm-linux --cache-file=tomtom.cache
+  ./configure --prefix=$PREFIX --host=$ARCH --cache-file=tomtom.cache
   sed -i "s|cp xgen-gmc gmarshal.c |cp xgen-gmc gmarshal.c \&\& sed -i \"s\|g_value_get_schar\|g_value_get_char\|g\" gmarshal.c |g" gobject/Makefile
   make -j$JOBS
   make install
@@ -153,7 +154,7 @@ then
   sed -i "294i\#endif" plugins/input-raw.c
   sed -i "s|# module_raw input|module_raw input|g" etc/ts.conf # tomtom one
   ./autogen.sh
-  ./configure --prefix=$PREFIX --host=arm-linux
+  ./configure --prefix=$PREFIX --host=$ARCH
   make -j$JOBS
   make install
 fi
@@ -167,7 +168,7 @@ then
   cd SDL-1.2.13
   wget -c http://tracks.yaina.de/source/sdl-fbcon-notty.patch
   patch -p0 -i sdl-fbcon-notty.patch
-  ./configure --prefix=$PREFIX --host=arm-linux \
+  ./configure --prefix=$PREFIX --host=$ARCH \
     --disable-esd --disable-joystick --disable-cdrom --disable-video-x11 \
     --disable-x11-vm --disable-dga --disable-video-x11-dgamouse \
     --disable-video-x11-xv --disable-video-x11-xinerama --disable-video-directfb \
@@ -186,7 +187,7 @@ then
   wget -c http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz
   tar xzf SDL_image-1.2.12.tar.gz
   cd SDL_image-1.2.12
-  ./configure --prefix=$PREFIX --host=arm-linux
+  ./configure --prefix=$PREFIX --host=$ARCH
   make -j$JOBS
   make install
 fi
@@ -198,7 +199,7 @@ fi
 #   wget -c http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.11.tar.gz
 #   tar xzf SDL_ttf-2.0.11.tar.gz
 #   cd SDL_ttf-2.0.11
-#   ./configure --prefix=$PREFIX --host=arm-linux --with-sdl-prefix=$PREFIX
+#   ./configure --prefix=$PREFIX --host=$ARCH --with-sdl-prefix=$PREFIX
 #   make
 #   make install
 # fi
@@ -217,8 +218,8 @@ then
   rm -rf build
   mkdir build
   cd build
-  sed -i "s|set ( TOMTOM_SDK_DIR /opt/tomtom-sdk )|set ( TOMTOM_SDK_DIR $TOMTOM_SDK_DIR )|g" /tmp/toolchain-arm-linux.cmake
-  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-arm-linux.cmake -DDISABLE_QT=ON
+  sed -i "s|set ( TOMTOM_SDK_DIR /opt/tomtom-sdk )|set ( TOMTOM_SDK_DIR $TOMTOM_SDK_DIR )|g" /tmp/toolchain-$ARCH.cmake
+  cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-$ARCH.cmake -DDISABLE_QT=ON
   make -j$JOBS
   make install
 fi
@@ -312,7 +313,7 @@ AppMainTitle|Navit|
 AppPort||
 COMMAND|CMD|hallo|navit.bmp|Navit|
 EOF
-convert /tmp/navit/navit/xpm/desktop_icons/128x128/navit.png -size 48x48 $OUT_PATH/SDKRegistry/navit.bmp
+convert $PREFIX/share/icons/hicolor/128x128/apps/navit.png -size 48x48 $OUT_PATH/SDKRegistry/navit.bmp
 
 # get a map!
 wget -c http://deelkar.dev.openstreetmap.org/maps/osm_france.bin -P /tmp
