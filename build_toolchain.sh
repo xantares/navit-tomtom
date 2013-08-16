@@ -241,7 +241,6 @@ cp $PREFIX/lib/libglib-2.0.so.0 lib
 cp $PREFIX/lib/libgmodule-2.0.so.0 lib
 cp $PREFIX/lib/libgobject-2.0.so lib
 cp $PREFIX/lib/libgthread-2.0.so lib
-cp $PREFIX/lib/libpng.so lib
 cp $PREFIX/lib/libpng12.so.0 lib
 cp $PREFIX/lib/libts-1.0.so.0 lib
 cp $PREFIX/lib/libts.so lib
@@ -262,8 +261,9 @@ cd /mnt/sdcard
 export PATH=\$PATH:/mnt/sdcard/navit/bin
 export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/mnt/sdcard/navit/lib
 export HOME=/mnt/sdcard/
-export NAVIT_LIBDIR=/mnt/sdcard/navit/lib/navit
-export NAVIT_SHAREDIR=/mnt/sdcard/navit/share
+export NAVIT_PREFIX=/mnt/sdcard/navit
+export NAVIT_LIBDIR=\$NAVIT_PREFIX/lib/navit
+export NAVIT_SHAREDIR=\$NAVIT_PREFIX/share
 
 # tslib requirements.
 export TSLIB_CONSOLEDEVICE=none
@@ -318,12 +318,12 @@ convert $PREFIX/share/icons/hicolor/128x128/apps/navit.png -size 48x48 $OUT_PATH
 
 # get a map!
 cp /tmp/osm_france.bin $OUT_PATH/navit/share/maps
-sed -i "723i\<mapset> <map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/osm_france.bin\" /></mapset>" $OUT_PATH/navit/share/navit.xml
+sed -i "s|xi:include href=\"\$NAVIT_SHAREDIR/maps/\*.xml\"/|map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/osm_france.bin\" /|g" $OUT_PATH/navit/share/navit.xml
 
 # configure navit
 sed -i "s|<debug name=\"segv\" level=\"1\"/>|<debug name=\"segv\" level=\"0\"/>|g" $OUT_PATH/navit/share/navit.xml
 sed -i "s|<graphics type=\"gtk_drawing_area\"/>|<graphics type=\"sdl\" w=\"320\" h=\"240\" bpp=\"16\" frame=\"0\" flags=\"1\"/>|g" $OUT_PATH/navit/share/navit.xml
-sed -i "s|source=\"gpsd://localhost\" gpsd_query=\"w+xj\"|source=\"file:/var/run/gpsfeed\"|g" $OUT_PATH/navit/share/navit.xml
+sed -i "s|source=\"gpsd://localhost\" gpsd_query=\"w+xj\"|source=\"file://var/run/gpsfeed\"|g" $OUT_PATH/navit/share/navit.xml
 
 # standalone boot system
 wget -c http://prdownloads.sourceforge.net/tomplayer/tomplayer/tomplayer_v0.230/tomplayer_v0.230.zip -P /tmp
