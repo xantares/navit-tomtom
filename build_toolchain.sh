@@ -233,6 +233,7 @@ cd navit
 mkdir -p bin lib share sdl ts
 
 # libraries
+cp $PREFIX/libfreetype.so.6 lib
 cp $PREFIX/lib/libSDL-1.2.so.0 lib
 cp $PREFIX/lib/libSDL_image.so lib
 cp $PREFIX/lib/libfontconfig.so lib
@@ -296,6 +297,9 @@ export LANG=en_US.utf8
 
 EOF
 chmod a+rx bin/navit-wrapper
+
+# copy plugins
+cp -r $PREFIX/lib/navit $OUT_PATH/navit/lib/
 
 # copy the images 
 cd share
