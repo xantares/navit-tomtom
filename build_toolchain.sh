@@ -235,7 +235,7 @@ mkdir -p bin lib share sdl ts
 # libraries
 cp $PREFIX/lib/libfreetype.so.6 lib
 cp $PREFIX/lib/libSDL-1.2.so.0 lib
-cp $PREFIX/lib/libSDL_image.so lib
+cp $PREFIX/lib/libSDL_image.so.0 lib
 cp $PREFIX/lib/libfontconfig.so lib
 cp $PREFIX/lib/libgio-2.0.so lib
 cp $PREFIX/lib/libglib-2.0.so.0 lib
