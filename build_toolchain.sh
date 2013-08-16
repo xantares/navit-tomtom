@@ -215,8 +215,7 @@ then
     svn up navit
   fi
   cd navit
-  rm -rf build
-  mkdir build
+  mkdir -p build
   cd build
   sed -i "s|set ( TOMTOM_SDK_DIR /opt/tomtom-sdk )|set ( TOMTOM_SDK_DIR $TOMTOM_SDK_DIR )|g" /tmp/toolchain-$ARCH.cmake
   cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-$ARCH.cmake -DDISABLE_QT=ON
@@ -234,28 +233,29 @@ cd navit
 mkdir -p bin lib share sdl ts
 
 # libraries
-cp $PREFIX/lib/libSDL-1.2.so.0 lib/libSDL-1.2.so
+cp $PREFIX/lib/libSDL-1.2.so.0 lib
 cp $PREFIX/lib/libSDL_image.so lib
 cp $PREFIX/lib/libfontconfig.so lib
 cp $PREFIX/lib/libgio-2.0.so lib
-cp $PREFIX/lib/libglib-2.0.so lib
-cp $PREFIX/lib/libgmodule-2.0.so lib 
+cp $PREFIX/lib/libglib-2.0.so.0 lib
+cp $PREFIX/lib/libgmodule-2.0.so.0 lib
 cp $PREFIX/lib/libgobject-2.0.so lib
 cp $PREFIX/lib/libgthread-2.0.so lib
 cp $PREFIX/lib/libpng.so lib
-cp $PREFIX/lib/libpng12.so lib
-cp $PREFIX/lib/libts-1.0.so.0 lib/libts-1.0.so
+cp $PREFIX/lib/libpng12.so.0 lib
+cp $PREFIX/lib/libts-1.0.so.0 lib
 cp $PREFIX/lib/libts.so lib
 cp $PREFIX/lib/libxml2.so lib
-cp $PREFIX/lib/librt.so.1 lib/librt.so
-cp $PREFIX/lib/libthread_db.so.1 lib/libthread_db.so
+cp $PREFIX/lib/librt.so.1 lib
+cp $PREFIX/lib/libthread_db.so.1 lib
+cp $PREFIX/lib/libz.so.1 lib
 cp $PREFIX/etc/ts.conf .
 
 # navit executable and wrapper
 cp $PREFIX/bin/navit bin/
 cat > bin/navit-wrapper << EOF
 #!/bin/sh
- 
+
 cd /mnt/sdcard
 
 # Set some paths.
@@ -293,6 +293,7 @@ export LANG=en_US.utf8
 
 # Run Navit.
 /mnt/sdcard/navit/bin/navit /mnt/sdcard/navit/share/navit.xml 2>/mnt/sdcard/navit/navit.log
+
 EOF
 chmod a+rx bin/navit-wrapper
 
@@ -316,7 +317,6 @@ EOF
 convert $PREFIX/share/icons/hicolor/128x128/apps/navit.png -size 48x48 $OUT_PATH/SDKRegistry/navit.bmp
 
 # get a map!
-wget -c http://deelkar.dev.openstreetmap.org/maps/osm_france.bin -P /tmp
 cp /tmp/osm_france.bin $OUT_PATH/navit/share/maps
 sed -i "723i\<mapset> <map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/osm_france.bin\" /></mapset>" $OUT_PATH/navit/share/navit.xml
 
@@ -325,4 +325,15 @@ sed -i "s|<debug name=\"segv\" level=\"1\"/>|<debug name=\"segv\" level=\"0\"/>|
 sed -i "s|<graphics type=\"gtk_drawing_area\"/>|<graphics type=\"sdl\" w=\"320\" h=\"240\" bpp=\"16\" frame=\"0\" flags=\"1\"/>|g" $OUT_PATH/navit/share/navit.xml
 sed -i "s|source=\"gpsd://localhost\" gpsd_query=\"w+xj\"|source=\"file:/var/run/gpsfeed\"|g" $OUT_PATH/navit/share/navit.xml
 
-
+# standalone boot system
+wget -c http://prdownloads.sourceforge.net/tomplayer/tomplayer/tomplayer_v0.230/tomplayer_v0.230.zip -P /tmp
+unzip -u /tmp/tomplayer_v0.230.zip -d /tmp
+cp /tmp/distrib/ttsystem $OUT_PATH
+mkdir -p $OUT_PATH/tomplayer
+cat > $OUT_PATH/tomplayer/tomplayergui.sh << EOF
+#!/bin/sh
+/mnt/sdcard/navit/bin/navit-wrapper > /mnt/sdcard/tomplayer/tomplayer.log 2>&1
+echo "navit-wrapper rc=\$?" >> /mnt/sdcard/tomplayer/tomplayer.log
+echo "[`date`] end" >> /mnt/sdcard/tomplayer/tomplayer.log
+EOF
+chmod a+rx $OUT_PATH/tomplayer/tomplayergui.sh
