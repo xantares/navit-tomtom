@@ -3,13 +3,16 @@
 # installs tomtom toolchain according instructions from:
 # http://wiki.navit-project.org/index.php/TomTom_development
 
+# also read this thread:
+# http://sourceforge.net/p/navit/discussion/512959/thread/c8bcd427?page=0
+
 # you'll need some packages:
 # - wget
 # - gettext
-# - libglib2.0-dev for glib-genmarshal
-# - automake, autoconf, libtool
-# - librsvg2-bin for rsvg-convert
-# - gcc-libs-multilib
+# - dev package of glib for glib-genmarshal
+# - automake, autoconf, libtool, cmake
+# - rsvg-convert
+# - 32 bits libc
 
 set -e
 
@@ -306,6 +309,10 @@ cp -r $PREFIX/lib/navit $OUT_PATH/navit/lib/
 # font
 mkdir -p $OUT_PATH/navit/fonts/conf.d
 cp $PREFIX/etc/fonts/fonts.conf $OUT_PATH/navit/fonts
+sed -i "s|/usr/share/fonts|/mnt/sdcard/navit/fonts|g" $OUT_PATH/navit/fonts/fonts.conf
+sed -i "s|$PREFIX/etc/fonts/conf.d|/mnt/sdcard/navit/fonts/conf.d|g" $OUT_PATH/navit/fonts/fonts.conf
+sed -i "s|$PREFIX/var/cache/fontconfig|/var/cache/fontconfig|g" $OUT_PATH/navit/fonts/fonts.conf
+
 cp -r $PREFIX/share/fontconfig/conf.avail/* $OUT_PATH/navit/fonts/conf.d
 
 # ts
@@ -331,13 +338,13 @@ EOF
 convert $PREFIX/share/icons/hicolor/128x128/apps/navit.png -size 48x48 $OUT_PATH/SDKRegistry/navit.bmp
 
 # get a map!
-cp /tmp/osm_france.bin $OUT_PATH/navit/share/maps
-sed -i "s|xi:include href=\"\$NAVIT_SHAREDIR/maps/\*.xml\"/|map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/osm_france.bin\" /|g" $OUT_PATH/navit/share/navit.xml
+cp /tmp/navit/build/navit/maps/osm_bbox_11.3,47.9,11.7,48.2.bin $OUT_PATH/navit/share/maps/osm_sample.bin
+sed -i "s|xi:include href=\"\$NAVIT_SHAREDIR/maps/\*.xml\"/|map type=\"binfile\" enabled=\"yes\" data=\"/mnt/sdcard/navit/share/maps/osm_sample.bin\" /|g" $OUT_PATH/navit/share/navit.xml
 
 # configure navit
 sed -i "s|<debug name=\"segv\" level=\"1\"/>|<debug name=\"segv\" level=\"0\"/>|g" $OUT_PATH/navit/share/navit.xml
 sed -i "s|<graphics type=\"gtk_drawing_area\"/>|<graphics type=\"sdl\" w=\"320\" h=\"240\" bpp=\"16\" frame=\"0\" flags=\"1\"/>|g" $OUT_PATH/navit/share/navit.xml
-sed -i "s|source=\"gpsd://localhost\" gpsd_query=\"w+xj\"|source=\"file://var/run/gpsfeed\"|g" $OUT_PATH/navit/share/navit.xml
+sed -i "s|source=\"gpsd://localhost\" gpsd_query=\"w+xj\"|source=\"file://dev/gpsdata\"|g" $OUT_PATH/navit/share/navit.xml
 
 # standalone boot system
 wget -c http://prdownloads.sourceforge.net/tomplayer/tomplayer/tomplayer_v0.230/tomplayer_v0.230.zip -P /tmp

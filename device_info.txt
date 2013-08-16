@@ -1,0 +1,183 @@
+
+Device:                  TomTom ONE
+Hardware:                4N00.004.2
+Bootloader version:      5.05
+GPS type:                SIRF 3
+
+$ ls -lR /dev
+/dev:
+crw-rw----    1 root     root     120,   0 Jan  1  1970 acc
+crw-rw----    1 root     root     121,   0 Jan  1  1970 adc
+crw-rw----    1 root     root     244,   0 Jan  1  1970 barc-snd
+crw-rw----    1 root     root     241,   0 Jan  1  1970 battery
+crw-rw----    1 root     root     252,   0 Jan  1  1970 buz
+crw-rw----    1 root     root      10, 240 Jan  1  1970 compass
+crw-------    1 root     root       5,   1 Jan  1  1970 console
+crw-rw----    1 root     root      14,   3 Jan  1  1970 dsp
+crw-------    1 root     root      29,   0 Jan  1  1970 fb
+crw-rw----    1 root     root     245,   0 Jan  1  1970 flash
+crw-rw----    1 root     root      10, 241 Jan  1  1970 fm2010
+crw-rw----    1 root     root     176,   0 Jan  1  1970 fmt
+crw-rw----    1 root     root     168,   0 Jan  1  1970 gacc
+crw-rw----    1 root     root     243,   0 Jan  1  1970 gps
+crw-rw----    1 root     root     169,   3 Jan  1  1970 gyro
+crw-rw----    1 root     root     169,   4 Jan  1  1970 gyro2
+brw-rw----    1 root     root       3,   0 Jan  1  1970 hda
+brw-rw----    1 root     root       3,   1 Jan  1  1970 hda1
+brw-rw----    1 root     root       3,  10 Jan  1  1970 hda10
+brw-rw----    1 root     root       3,  11 Jan  1  1970 hda11
+brw-rw----    1 root     root       3,  12 Jan  1  1970 hda12
+brw-rw----    1 root     root       3,  13 Jan  1  1970 hda13
+brw-rw----    1 root     root       3,  14 Jan  1  1970 hda14
+brw-rw----    1 root     root       3,  15 Jan  1  1970 hda15
+brw-rw----    1 root     root       3,   2 Jan  1  1970 hda2
+brw-rw----    1 root     root       3,   3 Jan  1  1970 hda3
+brw-rw----    1 root     root       3,   4 Jan  1  1970 hda4
+brw-rw----    1 root     root       3,   5 Jan  1  1970 hda5
+brw-rw----    1 root     root       3,   6 Jan  1  1970 hda6
+brw-rw----    1 root     root       3,   7 Jan  1  1970 hda7
+brw-rw----    1 root     root       3,   8 Jan  1  1970 hda8
+brw-rw----    1 root     root       3,   9 Jan  1  1970 hda9
+brw-rw----    1 root     root       3,  64 Jan  1  1970 hdb
+brw-rw----    1 root     root       3,  65 Jan  1  1970 hdb1
+brw-rw----    1 root     root       3,  74 Jan  1  1970 hdb10
+brw-rw----    1 root     root       3,  75 Jan  1  1970 hdb11
+brw-rw----    1 root     root       3,  76 Jan  1  1970 hdb12
+brw-rw----    1 root     root       3,  77 Jan  1  1970 hdb13
+brw-rw----    1 root     root       3,  78 Jan  1  1970 hdb14
+brw-rw----    1 root     root       3,  79 Jan  1  1970 hdb15
+brw-rw----    1 root     root       3,  66 Jan  1  1970 hdb2
+brw-rw----    1 root     root       3,  67 Jan  1  1970 hdb3
+brw-rw----    1 root     root       3,  68 Jan  1  1970 hdb4
+brw-rw----    1 root     root       3,  69 Jan  1  1970 hdb5
+brw-rw----    1 root     root       3,  70 Jan  1  1970 hdb6
+brw-rw----    1 root     root       3,  71 Jan  1  1970 hdb7
+brw-rw----    1 root     root       3,  72 Jan  1  1970 hdb8
+brw-rw----    1 root     root       3,  73 Jan  1  1970 hdb9
+crw-rw----    1 root     root     240,   0 Jan  1  1970 hwstatus
+prw-------    1 500      100             0 Jan  1  1970 initctl
+drwxr-xr-x    2 root     root            0 Jan  1  1970 input
+crw-r-----    1 root     root       1,   2 Jan  1  1970 kmem
+crw-r-----    1 root     root       1,   1 Jan  1  1970 mem
+crw-rw----    1 root     root     246,   0 Jan  1  1970 mep
+brw-rw----    1 root     root     250,   0 Jan  1  1970 mmcblk0
+brw-rw----    1 root     root     250,   1 Jan  1  1970 mmcblk0p1
+brw-rw----    1 root     root     250,   2 Jan  1  1970 mmcblk0p2
+brw-rw----    1 root     root     250,   3 Jan  1  1970 mmcblk0p3
+brw-rw----    1 root     root     250,   4 Jan  1  1970 mmcblk0p4
+brw-rw----    1 root     root     250,   5 Jan  1  1970 mmcblk0p5
+brw-rw----    1 root     root     250,   6 Jan  1  1970 mmcblk0p6
+brw-rw----    1 root     root     250,   7 Jan  1  1970 mmcblk0p7
+brw-rw----    1 root     root     250,   8 Jan  1  1970 mmcblk1
+brw-rw----    1 root     root     250,   9 Jan  1  1970 mmcblk1p1
+brw-rw----    1 root     root     250,  10 Jan  1  1970 mmcblk1p2
+brw-rw----    1 root     root     250,  11 Jan  1  1970 mmcblk1p3
+brw-rw----    1 root     root     250,  12 Jan  1  1970 mmcblk1p4
+brw-rw----    1 root     root     250,  13 Jan  1  1970 mmcblk1p5
+brw-rw----    1 root     root     250,  14 Jan  1  1970 mmcblk1p6
+brw-rw----    1 root     root     250,  15 Jan  1  1970 mmcblk1p7
+crw-r--r--    1 root     root      90,   0 Jan  1  1970 mtd0
+crw-r--r--    1 root     root      90,   2 Jan  1  1970 mtd1
+crw-rw-rw-    1 root     root       1,   3 Jan  1  1970 null
+crw-------    1 root     root     108,   0 Jan  1  1970 ppp
+crw-rw-r--    1 root     root       5,   2 Jan  1  1970 ptmx
+drwxr-xr-x    2 root     root            0 Jan  1  1970 pts
+crw-rw----    1 root     root     251,   0 Jan  1  1970 pwm
+brw-rw----    1 root     root       1,   0 Jan  1  1970 ram0
+brw-rw----    1 root     root       1,   1 Jan  1  1970 ram1
+brw-rw----    1 root     root       1,   2 Jan  1  1970 ram2
+brw-rw----    1 root     root       1,   3 Jan  1  1970 ram3
+crw-r--r--    1 root     root       1,   8 Jan  1  1970 random
+crw-rw----    1 root     root     122,   0 Jan  1  1970 remote
+crw-rw----    1 root     root     216,   0 Jan  1  1970 rfcomm0
+crw-rw----    1 root     root     216,   1 Jan  1  1970 rfcomm1
+crw-rw----    1 root     root     216,   2 Jan  1  1970 rfcomm2
+crw-rw----    1 root     root     216,   3 Jan  1  1970 rfcomm3
+crw-r--r--    1 root     root      10, 135 Jan  1  1970 rtc
+brw-rw----    1 root     root       8,   0 Jan  1  1970 sda
+brw-rw----    1 root     root       8,   1 Jan  1  1970 sda1
+brw-rw----    1 root     root       8,  10 Jan  1  1970 sda10
+brw-rw----    1 root     root       8,  11 Jan  1  1970 sda11
+brw-rw----    1 root     root       8,  12 Jan  1  1970 sda12
+brw-rw----    1 root     root       8,  13 Jan  1  1970 sda13
+brw-rw----    1 root     root       8,  14 Jan  1  1970 sda14
+brw-rw----    1 root     root       8,  15 Jan  1  1970 sda15
+brw-rw----    1 root     root       8,   2 Jan  1  1970 sda2
+brw-rw----    1 root     root       8,   3 Jan  1  1970 sda3
+brw-rw----    1 root     root       8,   4 Jan  1  1970 sda4
+brw-rw----    1 root     root       8,   5 Jan  1  1970 sda5
+brw-rw----    1 root     root       8,   6 Jan  1  1970 sda6
+brw-rw----    1 root     root       8,   7 Jan  1  1970 sda7
+brw-rw----    1 root     root       8,   8 Jan  1  1970 sda8
+brw-rw----    1 root     root       8,   9 Jan  1  1970 sda9
+brw-rw----    1 root     root       8,  16 Jan  1  1970 sdb
+brw-rw----    1 root     root       8,  17 Jan  1  1970 sdb1
+brw-rw----    1 root     root       8,  26 Jan  1  1970 sdb10
+brw-rw----    1 root     root       8,  27 Jan  1  1970 sdb11
+brw-rw----    1 root     root       8,  28 Jan  1  1970 sdb12
+brw-rw----    1 root     root       8,  29 Jan  1  1970 sdb13
+brw-rw----    1 root     root       8,  30 Jan  1  1970 sdb14
+brw-rw----    1 root     root       8,  31 Jan  1  1970 sdb15
+brw-rw----    1 root     root       8,  18 Jan  1  1970 sdb2
+brw-rw----    1 root     root       8,  19 Jan  1  1970 sdb3
+brw-rw----    1 root     root       8,  20 Jan  1  1970 sdb4
+brw-rw----    1 root     root       8,  21 Jan  1  1970 sdb5
+brw-rw----    1 root     root       8,  22 Jan  1  1970 sdb6
+brw-rw----    1 root     root       8,  23 Jan  1  1970 sdb7
+brw-rw----    1 root     root       8,  24 Jan  1  1970 sdb8
+brw-rw----    1 root     root       8,  25 Jan  1  1970 sdb9
+lrwxrwxrwx    1 root     root           14 Aug 14 22:30 sdcard -> /dev/mmcblk0p1
+drwxr-xr-x    2 root     root            0 Aug 14 22:30 shm
+crw-r--r--    1 root     root     244,   0 Jan  1  1970 sound
+crw-rw----    1 root     root     254,   0 Jan  1  1970 ts
+crw-rw----    1 root     root     253,   0 Jan  1  1970 tsraw
+brw-rw----    1 root     root     250,   0 Jan  1  1970 ttsd
+brw-rw----    1 root     root     250,   1 Jan  1  1970 ttsd1
+brw-rw----    1 root     root     250,   2 Jan  1  1970 ttsd2
+brw-rw----    1 root     root     250,   3 Jan  1  1970 ttsd3
+brw-rw----    1 root     root     250,   4 Jan  1  1970 ttsd4
+brw-rw----    1 root     root     250,   5 Jan  1  1970 ttsd5
+brw-rw----    1 root     root     250,   6 Jan  1  1970 ttsd6
+brw-rw----    1 root     root     250,   7 Jan  1  1970 ttsd7
+brw-rw----    1 root     root     250,   8 Jan  1  1970 ttsd8
+crw-rw-r--    1 root     root       5,   0 Jan  1  1970 tty
+crw-------    1 root     root       4,   0 Jan  1  1970 tty0
+crw-------    1 root     root       4,   1 Jan  1  1970 tty1
+crw-------    1 root     root       4,   2 Jan  1  1970 tty2
+crw-------    1 root     root       4,   3 Jan  1  1970 tty3
+crw-------    1 root     root       4,   4 Jan  1  1970 tty4
+crw-------    1 root     root       4,   5 Jan  1  1970 tty5
+crw-------    1 root     root       4,   6 Jan  1  1970 tty6
+crw-------    1 root     root       4,   7 Jan  1  1970 tty7
+crw-------    1 root     root       4,   8 Jan  1  1970 tty8
+crw-rw----    1 root     root       4,  64 Jan  1  1970 ttyS0
+crw-rw----    1 root     root       4,  65 Jan  1  1970 ttyS1
+crw-rw----    1 root     root       4,  66 Jan  1  1970 ttyS2
+crw-rw----    1 root     root       4,  67 Jan  1  1970 ttyS3
+crw-rw----    1 root     root     204,  64 Jan  1  1970 ttySAC0
+crw-rw----    1 root     root     204,  65 Aug 14 22:30 ttySAC1
+crw-rw----    1 root     root     204,  66 Jan  1  1970 ttySAC2
+crw-rw----    1 root     root     204,  67 Jan  1  1970 ttySAC3
+crw-rw----    1 root     root     127,   0 Jan  1  1970 ttyUSB
+crw-r--r--    1 root     root       1,   9 Jan  1  1970 urandom
+crw-rw-r--    1 root     root      10, 250 Jan  1  1970 vhci
+crw-rw-r--    1 root     root      81,   0 Jan  1  1970 video
+crw-rw----    1 root     root      10, 130 Jan  1  1970 watchdog
+crw-rw-r--    1 root     root       1,   5 Jan  1  1970 zero
+
+/dev/input:
+crw-------    1 root     root      13,  64 Jan  1  1970 event0
+crw-------    1 root     root      13,  65 Jan  1  1970 event1
+crw-------    1 root     root      13,  66 Jan  1  1970 event2
+crw-------    1 root     root      13,  67 Jan  1  1970 event3
+crw-------    1 root     root      10, 150 Jan  1  1970 keyboard
+crw-------    1 root     root      13,  63 Jan  1  1970 mice
+crw-------    1 root     root      10, 149 Jan  1  1970 mouse
+crw-------    1 root     root      13,  32 Jan  1  1970 mouse0
+crw-------    1 root     root      13,  33 Jan  1  1970 mouse1
+crw-------    1 root     root      13,  34 Jan  1  1970 mouse2
+crw-------    1 root     root      13,  35 Jan  1  1970 mouse3
+
+/dev/pts:
+
+/dev/shm:
