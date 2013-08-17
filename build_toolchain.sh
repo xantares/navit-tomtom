@@ -247,6 +247,7 @@ cp $PREFIX/lib/libglib-2.0.so.0 lib
 cp $PREFIX/lib/libgmodule-2.0.so.0 lib
 cp $PREFIX/lib/libgobject-2.0.so lib
 cp $PREFIX/lib/libgthread-2.0.so lib
+cp $PREFIX/lib/libpng.so.3 lib
 cp $PREFIX/lib/libpng12.so.0 lib
 cp $PREFIX/lib/libts-1.0.so.0 lib
 cp $PREFIX/lib/libts.so lib
@@ -274,16 +275,20 @@ export NAVIT_SHAREDIR=\$NAVIT_PREFIX/share
 # tslib requirements.
 export TSLIB_CONSOLEDEVICE=none
 export TSLIB_FBDEVICE=/dev/fb
-export TSLIB_TSDEVICE=/dev/ts
+export TSLIB_TSDEVICE=/dev/input/event0
 export TSLIB_CALIBFILE=/mnt/sdcard/navit/ts/pointercal
 export TSLIB_CONFFILE=/mnt/sdcard/navit/ts/ts.conf
 export TSLIB_PLUGINDIR=/mnt/sdcard/navit/lib/ts
+if ! test -f "\$TSLIB_CALIBFILE"
+then
+  ts_calibrate > /mnt/sdcard/navit/ts_calibrate.log 2>&1
+fi
 
 # SDL requirements.
 export SDL_MOUSEDRV=TSLIB
 export SDL_MOUSEDEV=\$TSLIB_TSDEVICE
 export SDL_NOMOUSE=1
-export SDL_FBDEV=/dev/fb
+export SDL_FBDEV=\$TSLIB_FBDEVICE
 export SDL_VIDEODRIVER=fbcon
 export SDL_AUDIODRIVER=dsp
 
@@ -296,7 +301,7 @@ export FC_DEBUG=0
 export LANG=en_US.utf8
 
 # Run Navit.
-/mnt/sdcard/navit/bin/navit /mnt/sdcard/navit/share/navit.xml 2>/mnt/sdcard/navit/navit.log
+/mnt/sdcard/navit/bin/navit /mnt/sdcard/navit/share/navit.xml > /mnt/sdcard/navit/navit.log 2>&1
 
 EOF
 chmod a+rx bin/navit-wrapper
@@ -315,7 +320,7 @@ cp -r $PREFIX/share/fontconfig/conf.avail/* $OUT_PATH/navit/share/fonts/conf.d
 
 # ts
 cp -r $PREFIX/lib/ts $OUT_PATH/navit/lib/
-touch $OUT_PATH/navit/ts/pointercal
+cp $PREFIX/bin/ts_* $OUT_PATH/navit/bin/
 
 # images 
 cd share
