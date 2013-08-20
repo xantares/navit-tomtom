@@ -351,7 +351,7 @@ sed -i "s|<graphics type=\"gtk_drawing_area\"/>|<graphics type=\"sdl\" w=\"320\"
 sed -i "s|source=\"gpsd://localhost\" gpsd_query=\"w+xj\"|source=\"file://dev/gpsdata\"|g" $OUT_PATH/navit/share/navit.xml
 
 # standalone boot system
-wget -c http://prdownloads.sourceforge.net/tomplayer/tomplayer/tomplayer_v0.230/tomplayer_v0.230.zip -P /tmp
+wget -c http://prdownloads.sourceforge.net/tomplayer/tomplayer/tomplayer_v0.230/tomplayer_v0.230.zip -P /tmp || :
 unzip -u /tmp/tomplayer_v0.230.zip -d /tmp
 cp /tmp/distrib/ttsystem $OUT_PATH
 mkdir -p $OUT_PATH/tomplayer
