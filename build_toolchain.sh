@@ -4,7 +4,7 @@
 # http://wiki.navit-project.org/index.php/TomTom_development
 
 # also read this thread:
-# http://sourceforge.net/p/navit/discussion/512959/thread/c8bcd427?page=0
+# http://sourceforge.net/p/navit/discussion/512959/thread/c8bcd427
 
 # you'll need some packages:
 # - wget
@@ -213,7 +213,8 @@ then
   cd /tmp
   if ! test -d navit
   then
-    svn co https://navit.svn.sourceforge.net/svnroot/navit/trunk/navit navit 
+#     svn co https://navit.svn.sourceforge.net/svnroot/navit/trunk/navit navit 
+    svn co https://svn.code.sf.net/p/navit/code/trunk/navit navit
   else
     svn up navit
   fi
@@ -338,7 +339,7 @@ AppMainTitle|Navit|
 AppPort||
 COMMAND|CMD|hallo|navit.bmp|Navit|
 EOF
-convert $PREFIX/share/icons/hicolor/128x128/apps/navit.png -size 48x48 $OUT_PATH/SDKRegistry/navit.bmp
+convert $PREFIX/share/icons/hicolor/128x128/apps/navit.png  -crop 100x100+12+28 -resize 48x48 $OUT_PATH/SDKRegistry/navit.bmp
 
 # get a map!
 cp /tmp/navit/build/navit/maps/osm_bbox_11.3,47.9,11.7,48.2.bin $OUT_PATH/navit/share/maps/osm_sample.bin
